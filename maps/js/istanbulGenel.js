@@ -1,22 +1,66 @@
- (function() {
+ function initialize() {
 
   google.maps.visualRefresh = true;
 
   // Defining variables that need to be available to some functions
-  var map, infoWindow;
-  
-  window.onload = function() {
-  
+  var map, infoWindow; 
+
+
+    // Map styles.
+    var styles = [
+      {
+        "featureType": "transit",
+        "stylers": [
+          { "visibility": "off" }
+        ]
+      },{
+        "featureType": "road",
+        "stylers": [
+          { "visibility": "off" }
+        ]
+      },{
+        "featureType": "poi",
+        "stylers": [
+          { "visibility": "off" }
+        ]
+      },{
+        "featureType": "administrative.province",
+        "elementType": "geometry.fill",
+        "stylers": [
+          { "visibility": "on" },
+          { "color": "#ff0080" }
+        ]
+      }
+    ];
+
+    // Create a new StyledMapType object, passing it the array of styles,
+    // as well as the name to be displayed on the map type control.
+    var styledMap = new google.maps.StyledMapType(styles,
+      {name: "Styled Map"});
+
+
+
     // Creating a map
     var options = {  
-      zoom: 11,
+      zoom: 9,
       center: new google.maps.LatLng(41.00, 29.02),  
       //mapTypeId: google.maps.MapTypeId.HYBRID  
-      mapTypeId: google.maps.MapTypeId.ROADMAP
+      //mapTypeId: google.maps.MapTypeId.ROADMAP
+      mapTypeControlOptions: {
+        mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']}
     };  
     
     map = new google.maps.Map(document.getElementById('map'), options);
-    
+
+    //Associate the styled map with the MapTypeId and set it to display.
+    map.mapTypes.set('map_style', styledMap);
+    map.setMapTypeId('map_style');
+
+    var borderLayer = new google.maps.KmlLayer({
+      url: 'http://localhost/map/maps/js/iller.kml'    });
+
+    borderLayer.setMap(map);
+
     // Adding a marker to the map
     /*var marker = new google.maps.Marker({
       position: new google.maps.LatLng(39.92, 32.85),
@@ -63,5 +107,6 @@
     
     });*/
   
-  };
-})();
+  }
+
+google.maps.event.addDomListener(window, 'load', initialize);
